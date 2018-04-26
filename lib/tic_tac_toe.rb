@@ -1,17 +1,18 @@
-
-
-
-
 def position_taken?(board, index)
   !(board[index].nil? || board[index] == " ")
 end
 
 def valid_move?(board,index)
- (!position_taken?(board,index) && index.between?(0,8))? true : false
+ (!position_taken?(board,index) && index.between?(0,8))? true :false
 end
 
 def move(board, index, char)
   board[index] = char
+  valid_move?(board,index)
+end
+
+def move(board, index, current_player)
+  board[index] = current_player
 end
 
 def turn(board)
@@ -30,7 +31,6 @@ def turn(board)
   end
   display_board(board)
 end
-
 def display_board(board)
   puts " #{board[0]} | #{board[1]} | #{board[2]} "
   puts "-----------"
@@ -38,22 +38,18 @@ def display_board(board)
   puts "-----------"
   puts " #{board[6]} | #{board[7]} | #{board[8]} "
 end
-
-
-
 def input_to_index(input)
   input.to_i - 1
 end 
-
 def turn_count(board)
-    count = 0
+      count = 0
       board.each do |position|
       if position == "X" || position == "O"
           count += 1 
       end
     end
     count 
-  end 
+end 
   
 def current_player(board)
     if turn_count(board) % 2 == 0
@@ -82,11 +78,7 @@ WIN_COMBINATIONS = [
   win_index_6 = WIN_COMBINATIONS[5]
   win_index_7 = WIN_COMBINATIONS[6]
   win_index_8 = WIN_COMBINATIONS[7]
-  
-  
-  
-  
-  
+
   def play(board) 
     until over?(board) do
       turn(board)
@@ -121,5 +113,28 @@ WIN_COMBINATIONS = [
   def over?(board)
     won?(board) || full?(board) || draw?(board)
   end  
+
+  def full?(board)
+    board.all?{|cell| cell == "X" || cell == "O"}
+  end
   
+  def draw?(board)
+     full?(board) && !won?(board)
+  end
+  
+  def over?(board)
+    won?(board) || full?(board) 
+  end  
+  
+  def winner(board)
+    if won?board
+        board[won?(board)[0]]
+    end
+  end
+  
+  def won?(board)
+    WIN_COMBINATIONS.detect do |combo|
+   board[combo[0]] == board[combo[1]] && board[combo[1]] == board[combo[2]] && position_taken?(board, combo[1])
+  end
+end
 
